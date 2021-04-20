@@ -3,7 +3,7 @@ import os.path as osp
 import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
 import numpy as np
-from data_loader import kclDataset
+from scripts.benchmark_kcl.data_loader import kclDataset
 
 PATH_TO_ROOT = osp.join(osp.dirname(osp.realpath(__file__)), '..') + '/'
 

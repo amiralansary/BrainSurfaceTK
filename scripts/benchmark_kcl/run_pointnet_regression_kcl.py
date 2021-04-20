@@ -17,15 +17,15 @@ from torch.utils.tensorboard import SummaryWriter
 from models.pointnet.src.models.pointnet2_regression_v2 import Net
 from models.pointnet.main.pointnet2 import train, test_regression
 
-from utils import data
+from scripts.benchmark_kcl.utils import data
 
 PATH_TO_ROOT = osp.join(osp.dirname(osp.realpath(__file__)), '..', '..') + '/'
 PATH_TO_POINTNET = osp.join(osp.dirname(osp.realpath(__file__)), '..', '..', '..', 'models', 'pointnet') + '/'
 
 if __name__ == '__main__':
 
-    num_workers = 2
-    local_features = []
+    num_workers = 8
+    local_features = ['Curvature', 'MyelinMap', 'Sulc', 'corrThickness']
     global_features = []
 
     #################################################
@@ -45,14 +45,14 @@ if __name__ == '__main__':
 
     # 1. Model Parameters
     ################################################
-    lr = 0.001
-    batch_size = 4
-    comment = 'batch_4'
+    lr = 0.001  # 0.001
+    batch_size = 2
+    comment = 'kcl_left_wm_with_feat_batch_2_lr_001'
     gamma = 0.9875
     scheduler_step_size = 2
     target_class = 'scan_age'
     task = 'regression'
-    numb_epochs = 200
+    numb_epochs = 400
     number_of_points = 40000
 
     ################################################
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     ###############################################
     indices_dir = "/vol/biomedic3/aa16914/dhcp_brain_emma/data/age_prediction/birth_age/data_splits"
     data_folder = "/vol/biomedic3/aa16914/dhcp_brain_emma/data/age_prediction/data/surf_feat_vtp"
-    files_ending = "_right_white.sym.40k_fs_LR.surf.shape.label.vtp"
+    files_ending = "_left_white.sym.40k_fs_LR.surf.shape.label.vtp"
 
     train_dataset, test_dataset, validation_dataset, train_loader, test_loader, val_loader, num_labels = data(
         data_folder,
@@ -76,6 +76,8 @@ if __name__ == '__main__':
         hemisphere,
         num_workers=8
     )
+
+    print(train_dataset[0])
 
     if len(local_features) > 0:
         numb_local_features = train_dataset[0].x.size(1)
